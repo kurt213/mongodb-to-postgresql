@@ -1,0 +1,18 @@
+{
+  "name": "mongodb-to-postgres-npm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.1.0",
+    "async-waterfall": "^0.1.5",
+    "moment": "^2.24.0",
+    "mongodb": "^3.2.7",
+    "pg": "^7.11.0"
+  }
+}
