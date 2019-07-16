@@ -1,0 +1,13 @@
+{
+    "mongo_connection": {
+        "url": "",
+        "database": ""
+    },
+    "postgres_connection": {
+        "user": "",
+        "host": "",
+        "database": "",
+        "password": "",
+        "port": ""
+    }
+}

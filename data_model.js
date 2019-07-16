@@ -1,15 +1,21 @@
+// Store PostgreSQL database models here
+/* 
+    First item in each table list is the name of the Postgres table and should match the collection name in MongoDB
+    Second item in each table should be the Primary Key item
+    Third item onwards are the columns that you want to migrate from MongoDB to Postgres. The names should match the MongoDB names, unless you want to create a custom rule in the migration script
+*/
 
 module.exports.all_models = {
-    table1_model: [
-        'table1',
+    mongo_dummy_data_model: [
+        'mongo_dummy_data',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL | table1',
-        'user_id VARCHAR(50) | table1',
-        'created_by VARCHAR(50) | table1',
-        'created_at TIMESTAMPTZ | table1', 
-        'content TEXT | table1',
-        'label VARCHAR(150) | table1',
-      ],
-      table2_model: [
+        'student_id INT4 | table1',
+        'class_id INT4 | table1',
+        'created_at TIMESTAMPTZ | table1',
+        'updated_at TIMESTAMPTZ | table1',
+        'scores _TEXT | table1'
+    ],
+    /*table2_model: [
         'table2',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL | table2',
         'plan VARCHAR(50) | table2',
@@ -19,8 +25,8 @@ module.exports.all_models = {
         'created_at TIMESTAMPTZ | table2',
         'updated_at TIMESTAMPTZ | table2',
         'valid_from TIMESTAMPTZ | table2',
-      ],
-      table3_model: [
+    ],
+    table3_model: [
         'table3',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL | table3',
         'name VARCHAR(101) | table3',
@@ -35,6 +41,6 @@ module.exports.all_models = {
         'price_year INT4 | table3',
         'commission INT4 | table3',
         'created_at TIMESTAMPTZ | table3',
-        'updated_at TIMESTAMPTZ | table3',    
-      ],
+        'updated_at TIMESTAMPTZ | table3',
+    ],*/
 }

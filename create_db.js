@@ -53,6 +53,9 @@ module.exports = async function (complete) {
             all_fields.sort()
             all_fields_x.sort()
             model_comparison.sort()
+            console.log('all_fields: ', all_fields)
+            console.log('all_fields_x: ', all_fields_x)
+            console.log('model_comparison: ', model_comparison)
 
             var toAdd = []
             var toRemove = []

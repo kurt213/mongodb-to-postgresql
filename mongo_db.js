@@ -1,6 +1,8 @@
 const MongoClient = require( 'mongodb' ).MongoClient;
 const mongo_json = require('./db_details.json')
 
+// MongoDB database connection module
+
 let url = mongo_json.mongo_connection.url;
 
 let _db;
