@@ -96,12 +96,10 @@ module.exports = function (complete) {
     }
 
     function json_key(object, key, k) {
+        if (typeof(object) === 'undefined') {
+            return null
+        }
         let json = JSON.parse(JSON.stringify(object))
-        // ------------
-        /* collection queried off the back of initial query will have fields such as 'name', which are already used
-           for initial search. To avoid duplication, these are renamed in SQL model, and the key is amended so can
-           still be found in Mongo collection */
-        // ------------
         let out_array = [];
 
         if (object === null) {
@@ -116,6 +114,9 @@ module.exports = function (complete) {
                 JSON.stringify(json[key]).replace(/(\r\n|\n|\r)/gm, '').length > 0
             ) {
                 // logic for different data types, i.e. date - moment, integer - convert number if needed
+                if (model_data_type[k].indexOf('JSONB') !== -1) {
+                    return JSON.stringify(json[key])
+                }
                 if (model_data_type[k].indexOf('_') !== -1) {
                     for (j in (json[key]) ) {
                         out_array.push(json[key][j])
@@ -302,9 +303,10 @@ module.exports = function (complete) {
                             // custom rules applied in this switch statement if needed, otherwise default will be used
                             // -------------------------------------------------------
                             switch (columns[j]) {
-                                case 'user_id':
+                                case 'child_level':
                                     insert_row.push(
-                                        json_key(data_row, 'user', j)
+                                        json_key(data_row.parent_level, 'child_level', j)
+                                        
                                     )
                                     break
                                 default:
@@ -380,7 +382,7 @@ module.exports = function (complete) {
             console.log(err)
             console.log('complete')
             MigrationIsRunning = false
-            if (typeof complete === 'function') setTimeout(complete, 10000)
+            if (typeof complete === 'function') setTimeout(complete, 1000)
         }
     )
 }

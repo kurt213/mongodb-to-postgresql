@@ -1,11 +1,11 @@
-{ "_id" : { "$oid" : "50b59cd75bed76f46522c34e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_1", "score_2" ] }
+{ "_id" : { "$oid" : "50b59cd75bed76f46522c34e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_1", "score_2" ], "parent_level": {"child_level": 0.53} }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c35e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_3", "score_2" ] }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c36e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_6", "score_2" ] }
-{ "_id" : { "$oid" : "50b59cd75bed76f46522c37e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_8", "score_2" ] }
+{ "_id" : { "$oid" : "50b59cd75bed76f46522c37e" }, "student_id" : 0, "class_id" : 2, "object_test": { "object_1": "obj_1", "object_2": "obj_2"} }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c38e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_12", "score_2" ] }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c39e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_141", "score_2" ] }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c14e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_13", "score_2" ] }
-{ "_id" : { "$oid" : "50b59cd75bed76f46522c24e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_155", "score_2" ] }
-{ "_id" : { "$oid" : "50b59cd75bed76f46522c74e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_1", "score_22" ] }
+{ "_id" : { "$oid" : "50b59cd75bed76f46522c24e" }, "student_id" : 0, "class_id" : 2, "parent_level": {"child_level": -3.23} }
+{ "_id" : { "$oid" : "50b59cd75bed76f46522c74e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_1", "score_22" ], "object_test": { "object_1": "obj_1", "object_2": "obj_2"} }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c44e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_1", "score_24" ] }
 { "_id" : { "$oid" : "50b59cd75bed76f46522c54e" }, "student_id" : 0, "class_id" : 2, "scores" : ["score_1", "score_12" ] }

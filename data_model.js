@@ -13,7 +13,9 @@ module.exports.all_models = {
         'class_id INT4 | table1',
         'created_at TIMESTAMPTZ | table1',
         'updated_at TIMESTAMPTZ | table1',
-        'scores _TEXT | table1'
+        'scores _TEXT | table1',
+        'object_test JSONB | table1',
+        'child_level NUMERIC | table1' // custom
     ],
     /*table2_model: [
         'table2',
