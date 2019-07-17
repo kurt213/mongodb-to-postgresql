@@ -9,25 +9,21 @@ module.exports.all_models = {
     mongo_dummy_data_model: [
         'mongo_dummy_data',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL | table1',
-        'student_id INT4 | table1',
+        'student_id VARCHAR(50) UNIQUE | table1',
         'class_id INT4 | table1',
         'created_at TIMESTAMPTZ | table1',
         'updated_at TIMESTAMPTZ | table1',
-        'scores _TEXT | table1',
+        'scores _VARCHAR | table1',
         'object_test JSONB | table1',
         'child_level NUMERIC | table1' // custom
     ],
-    /*table2_model: [
+    table2_model: [
         'table2',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL | table2',
-        'plan VARCHAR(50) | table2',
-        'user_id VARCHAR(50) | table2',
-        'auto_renew VARCHAR(10) | table2',
-        'expires TIMESTAMPTZ | table2',
-        'created_at TIMESTAMPTZ | table2',
-        'updated_at TIMESTAMPTZ | table2',
-        'valid_from TIMESTAMPTZ | table2',
+        "expires TIMESTAMPTZ DEFAULT '2015-01-01' | table2",
+        'size INT4 NOT NULL | table2',
     ],
+    /*
     table3_model: [
         'table3',
         '_id VARCHAR(50) PRIMARY KEY NOT NULL | table3',

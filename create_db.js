@@ -27,14 +27,14 @@ module.exports = async function (complete) {
         if (res.rows.length !== 0) {
             for (let t = 0; t < res.rows.length; t++) {
             model_comparison.push(
-                res.rows[t].column_name +
+                res.rows[t].column_name /* +
                 ' ' +
                 res.rows[t].udt_name.toUpperCase() +
                 (res.rows[t].character_maximum_length !== null
                     ? '(' + res.rows[t].character_maximum_length + ')'
                     : '') +
                 (t === 0 ? ' PRIMARY KEY' : '') +
-                (res.rows[t].is_nullable === 'NO' ? ' NOT NULL' : '')
+                (res.rows[t].is_nullable === 'NO' ? ' NOT NULL' : '')*/
             )
             }
             // sort both arrays so they match - in case model ordering has changed
@@ -45,16 +45,16 @@ module.exports = async function (complete) {
             })
             all_fields_x = all_fields.slice()
             all_fields = all_fields.map(function (x) {
-            return x.replace(/ DEFAULT.*/g, '')
+            //return x.replace(/ DEFAULT.*/g, '').replace(/ UNIQUE.*/g, '')
+                return x.replace(/ .*/g, '') 
             })
             all_fields_x = all_fields_x.map(function (x) {
-            return x.replace(/ \|.*/g, '')
+                return x.replace(/ \|.*/g, '')
             })
             all_fields.sort()
             all_fields_x.sort()
             model_comparison.sort()
             console.log('all_fields: ', all_fields)
-            console.log('all_fields_x: ', all_fields_x)
             console.log('model_comparison: ', model_comparison)
 
             var toAdd = []
@@ -67,11 +67,9 @@ module.exports = async function (complete) {
             let combine_del = toRemove.join(', DROP COLUMN ')
             let del_text =
             'ALTER TABLE ' + table_name + ' DROP COLUMN ' + combine_del
-            if (toRemove.length > 0 && table_name.indexOf('query_') == -1) {
-            if (toRemove.length > 0 && table_name.indexOf('gs_') == -1) {
+            if (toRemove.length > 0) {
                 console.log(del_text)
                 await PostgresConnection().query(del_text)
-            }
             }
 
             // Insert new columns
@@ -82,12 +80,11 @@ module.exports = async function (complete) {
             let combine_ins = toAdd.join(', ADD COLUMN ')
             let ins_text =
             'ALTER TABLE ' + table_name + ' ADD COLUMN ' + combine_ins
-            if (toAdd.length > 0 && table_name.indexOf('query_') == -1) {
-            if (toAdd.length > 0 && table_name.indexOf('gs_') == -1) {
+            if (toAdd.length > 0) {
                 console.log(ins_text)
                 await PostgresConnection().query(ins_text)
             }
-            }
+            
         }
         let combine_cols = all_cols.join(', ')
         // If table does not exist, create it
