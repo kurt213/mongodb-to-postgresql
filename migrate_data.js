@@ -96,11 +96,12 @@ module.exports = function (complete) {
     }
 
     function json_key(object, key, k) {
+        let out_array = [];
+
         if (typeof(object) === 'undefined') {
             return null
         }
         let json = JSON.parse(JSON.stringify(object))
-        let out_array = [];
 
         if (object === null) {
             return null
@@ -109,6 +110,7 @@ module.exports = function (complete) {
                 JSON.stringify(json[key]) === 'null' ||
                 typeof json[key] === 'undefined'
             ) {
+
                 return null
             } else if (
                 JSON.stringify(json[key]).replace(/(\r\n|\n|\r)/gm, '').length > 0
@@ -117,13 +119,16 @@ module.exports = function (complete) {
                 if (model_data_type[k].indexOf('JSONB') !== -1) {
                     return JSON.stringify(json[key])
                 }
-                if (model_data_type[k].indexOf('_') !== -1) {
+                else if (model_data_type[k].indexOf('_') !== -1) {
                     for (j in (json[key]) ) {
                         out_array.push(json[key][j])
                     }
                     return out_array
                 }
                 else if (model_data_type[k].indexOf('TIMESTAMP') !== -1) {
+                    if (json[key] === null) {
+                        print('this time is null')
+                    }
                     return moment(
                         JSON.stringify(json[key])
                             .replace(/(\r\n|\n|\r)/gm, '')
@@ -196,13 +201,13 @@ module.exports = function (complete) {
             pg_columns_String +
             ' from ' +
             table_name +
-            ' ORDER BY updated_at DESC LIMIT 5'
+            ' WHERE updated_at IS NOT NULL ORDER BY updated_at DESC LIMIT 5'
         let pgCreateText =
             'SELECT ' +
             pg_columns_String +
             ' from ' +
             table_name +
-            ' ORDER BY created_at DESC LIMIT 5'
+            ' WHERE created_at IS NOT NULL ORDER BY created_at DESC LIMIT 5'
         if (updated_at_flag) {
             pg_update_res = await PostgresConnection().query(pgUpdateText)
         }
