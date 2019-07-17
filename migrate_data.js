@@ -44,10 +44,11 @@ module.exports = function (complete) {
     let no_data_flag = ''
     let pg_columns = []
     let updated_at_flag = false
+    let created_at_flag = false
     let model_name = ''
-    let model_source = []
     let model_data_type = []
     let pg_update_res
+    let pg_create_res
 
     let model_transform = async function (base_model, cb) {
         // Get table name
@@ -57,14 +58,10 @@ module.exports = function (complete) {
         model_data_type = model_input.map(function (x) {
             return x.split(/\s+/)[1]
         })
-        model_source = model_input.map(function (x) {
-            return x.replace(/.*\| /g, '')
-        })
 
         table_name = model_input.shift()
         model_name = table_name.replace(/s$/, '')
         model_data_type.shift()
-        model_source.shift()
 
         // remove data type information from model
         columns = []
@@ -74,13 +71,18 @@ module.exports = function (complete) {
             columns.push(model_input[m].substring(0, index))
         }
 
-        if (columns.includes('updated_at')) {
-            pg_columns = [columns[0], 'created_at', 'updated_at']
-            updated_at_flag = true
+        // check if created at or updated at fields exist
+        created_at_flag = false
+        updated_at_flag = false
+        pg_columns = []
+        pg_columns.push(columns[0])
+        if (columns.includes('created_at')) {
+            pg_columns.push('created_at')
+            created_at_flag = true
         }
-        else {
-            pg_columns = [columns[0], 'created_at']
-            updated_at_flag = false
+        if (columns.includes('updated_at')) {
+            pg_columns.push('updated_at')
+            updated_at_flag = true
         }
 
         latest_update_date = ''
@@ -208,14 +210,24 @@ module.exports = function (complete) {
             ' from ' +
             table_name +
             ' WHERE created_at IS NOT NULL ORDER BY created_at DESC LIMIT 5'
+        let pgAllText = 
+            'SELECT ' +
+            pg_columns_String +
+            ' from ' +
+            table_name +
+            ' LIMIT 5'
+
         if (updated_at_flag) {
             pg_update_res = await PostgresConnection().query(pgUpdateText)
         }
+        if (created_at_flag) {
+            pg_create_res = await PostgresConnection().query(pgCreateText)
+        }
+        pg_all_res = await PostgresConnection().query(pgAllText)
 
-        let pg_create_res = await PostgresConnection().query(pgCreateText)
         // console.log(pg_update_res)
         // console.log(pg_create_res)
-        if (typeof pg_create_res.rows[0] === 'undefined') {
+        if (typeof pg_all_res.rows[0] === 'undefined') {
             no_data_flag = 'yes'
             console.log('no postgres data found')
         } else {
@@ -225,11 +237,13 @@ module.exports = function (complete) {
                     .toISOString()
                 console.log('latest updated_at date: ' + latest_update_date)
             }
+            if (created_at_flag) {
+                latest_create_date = moment(pg_create_res.rows[0].created_at)
+                    .add(1, 'seconds')
+                    .toISOString()
+                console.log('latest created_at date: ' + latest_create_date)
+            }
 
-            latest_create_date = moment(pg_create_res.rows[0].created_at)
-                .add(1, 'seconds')
-                .toISOString()
-            console.log('latest created_at date: ' + latest_create_date)
         }
         cb()
     }
@@ -249,7 +263,7 @@ module.exports = function (complete) {
     async function startMongoExtract(queryType, cMessage, cb) {
 
         console.log(queryType)
-        if ((no_data_flag == 'yes' && queryType == 'all_data') || (no_data_flag != 'yes' && ((queryType == 'existing_data' && updated_at_flag) || queryType == 'new_data'))) {
+        if ((no_data_flag == 'yes' && queryType == 'all_data') || (no_data_flag != 'yes' && ((queryType == 'existing_data' && updated_at_flag) || (queryType == 'new_data' && created_at_flag) ))) {
             let count = null
             let found = null
             let limit = 250
@@ -263,7 +277,7 @@ module.exports = function (complete) {
 
                 mongo_data = await new Promise((resolve, reject) => {
 
-                    if (queryType == 'new_data') {
+                    if (queryType == 'new_data' && created_at_flag) {
                         db.collection(table_name)
                             .find({ created_at: { $gte: new Date(latest_create_date) } })
                             .sort({ created_at: 1 })
@@ -284,7 +298,7 @@ module.exports = function (complete) {
                     } else if (queryType == 'all_data') {
                         db.collection(table_name)
                             .find({})
-                            .sort({ created_at: 1 })
+                            // .sort({ created_at: 1 })
                             .skip(count === null ? 0 : count)
                             .limit(limit)
                             .toArray((err, items) => {
@@ -308,10 +322,10 @@ module.exports = function (complete) {
                             // custom rules applied in this switch statement if needed, otherwise default will be used
                             // -------------------------------------------------------
                             switch (columns[j]) {
-                                case 'child_level':
+                                // custom rule for extracting value from child level i.e. 'common' that is stored in the 'name' object
+                                case 'common_name':
                                     insert_row.push(
-                                        json_key(data_row.parent_level, 'child_level', j)
-                                        
+                                        json_key(data_row.name, 'common', j)
                                     )
                                     break
                                 default:
@@ -333,15 +347,10 @@ module.exports = function (complete) {
                 console.log('FOUND:' + found)
                 console.log('ROWS:' + rows.length)
 
-                const results = []
-                // var text = "INSERT into threads (thread_id, ap_url, created_at, updated_at, msg_count) VALUES ($1, $2, $3, $4, $5)"
-
                 for (r in rows) {
                     try {
-                        // Currently deletes old data and inserts new data - this will need to be changed to updated
-                        // Needs to only insert NEW or those that have been modified - created at and updated at
                         let values = rows[r]
-                        if (queryType == 'new_data' || queryType == 'all_data') {
+                        if ( (queryType == 'new_data' && created_at_flag) || queryType == 'all_data') {
                             await PostgresConnection().query(pgInsertStatement, values)
                         } else if (queryType == 'existing_data' && updated_at_flag) {
                             await PostgresConnection().query(pgUpdateStatement, values)
