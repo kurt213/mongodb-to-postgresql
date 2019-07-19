@@ -52,7 +52,6 @@ module.exports = function (complete) {
 
     let model_transform = async function (base_model, cb) {
         // Get table name
-        // **** Change for each model that needs to be accessed
         let base_model_input = report_models.all_models[models[base_model]]
         let model_input = base_model_input.slice()
         model_data_type = model_input.map(function (x) {

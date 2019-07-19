@@ -20,6 +20,7 @@ There are four steps for setup:
 1. Setting up your local environment
 2. Configure database connection settings
 3. Configure Data Model
+4. Cnofigure custom fields (if required)
 4. Run scripts
 
 #### Environment Setup
@@ -65,7 +66,7 @@ Example:
 An example database model setup has already been created based on the JSON data in the 'dummy_data' folder. Please see the section further down for instructions on running the example data.
 
 The object data model is an object created in the data_model.js file. this contains a list of objects (one for each table), and within each of these an array with information on the table, field names and field types.
-The field and table names MUST match the collection name and fields
+The field and table names need to match each other to pick up the correct collection name and fields
 
 ```
 Example:
@@ -79,8 +80,50 @@ module.exports.all_models = {
         'title TEXT',
         'authors _TEXT', // this is an array field
         'languages JSONB' // this is a json field
+    ],
+    table_2_model: [
+        'table_2',
+        '_id VARCHAR(50) PRIMARY KEY NOT NULL'
     ]
 }
+```
+
+#### Configure Custom Fields (If Required)
+There may be custom fields that you want to access that require more complex logic. Some example use cases are:
+1. The MongoDB field has a different name to the field name you want in Postgres
+2. The MongoDB field is nested within an object (see the example process below for more detail on this)
+3. You want to perform a transformation of the data prior to loading into Postgres
+
+These custom field rules are created in the migrate_data.js file, in rows 321 onwards. The code block looks like this:
+```
+// custom rules applied in this switch statement if needed, otherwise default will be used
+// -------------------------------------------------------
+switch (columns[j]) {
+    // custom rule for extracting value from child level i.e. 'common' that is stored in the 'name' object
+    case 'common_name':
+        insert_row.push(
+            json_key(data_row.name, 'common', j)
+        )
+        break
+    default:
+        insert_row.push(
+            json_key(data_row, columns[j], j)
+        )
+}
+// -------------------------------------------------------
+}
+```
+In the example shown here, the column defined in the data model as common_name will have a custom rule applied. 
+In this case, a property 'common' in the 'name' object in a MongoDB document is what wants to be migrated.
+
+#### Run Database Creation & Migration Scripts
+There are two basic scripts for this tool. To run them, navigate to the root folder of this repository and run:
+```
+node start.js createdb
+```
+This will create the database model defined in the data_model.js file into your chosen Postgres instance.  For basic changes, you can make changes to your data model and re-run the script to add or delete columns. 
+```
+node start.js migratedata
 ```
 
 TBC...

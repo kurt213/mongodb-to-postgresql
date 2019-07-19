@@ -3,6 +3,9 @@ let MigrateData = require('./migrate_data.js')
 
 // Starter script for app. Execute the two methods from here (create database schema in PostgreSQL or migrate data from MongoDB)
 
+// -------------------------------------
+
+
 if (process.argv[2] !== undefined) {
     switch (process.argv[2]) {
         case 'createdb':

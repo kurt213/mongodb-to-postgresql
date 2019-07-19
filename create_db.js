@@ -2,6 +2,12 @@ let report_models = require('./data_model.js')
 var MongoConnection = require( './mongo_db.js' );
 var PostgresConnection = require( './postgres_db.js' );
 
+
+// Create PostgreSQL database from data model module
+
+// -------------------------------------
+
+
 module.exports = async function (complete) {
     // table name as index 0, followed by column & data types
     console.log('Creating Postgres models')
@@ -59,6 +65,7 @@ module.exports = async function (complete) {
 
             var toAdd = []
             var toRemove = []
+            
             // Delete removed columns
             model_comparison.map(r => {
             if (all_fields.indexOf(r) < 0) toRemove.push(r.replace(/ .*/g, ''))
