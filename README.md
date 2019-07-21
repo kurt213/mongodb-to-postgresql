@@ -21,7 +21,7 @@ There are four steps for setup:
 2. Configure database connection settings
 3. Configure Data Model
 4. Configure custom fields (if required)
-4. Run scripts
+5. Run scripts
 
 #### Environment Setup
 
@@ -127,6 +127,17 @@ node start.js migratedata
 ```
 This will execute the data migration from MongoDB to PostgreSQL based on the data model and custom rules setup. This can be run once to migrate data as a one off process. Optionally, if using 'created_at' and 'updated_at' timestamp dates in MongoDB and these have been included in the data_model.js setup, the script can be run at regular intervals to transfer new or updated documents to Postgres
 
+## Example
+
+Steps to run example:
+1. Complete Steps 1 & 2 of the Setup instructions above
+2. Upload dummy MongoDB data
+3. Configure Data Model
+4. Configure custom fields
+5. Run scripts
+
+To be continued...
+
 ## Other Information
 
 ### Further Notes
@@ -138,4 +149,4 @@ Please don't hesitate to provide feedback, feature improvements and bugs on this
 - Provide example data step through
 - Use case information for timestamp fields
 - Make timestamp field names customisable
-- Currently, migration script can only be run once without timestamp fields, with data needing to be deleted before performing a new migration. If not using timestamp fields, potentially create option to remove and re-migrate data instead
+- Currently, migration script can only be run once without timestamp fields, with data needing to be deleted before performing a new migration. If not using timestamp fields, potentially create option to remove and re-migrate data automatically in entire script
