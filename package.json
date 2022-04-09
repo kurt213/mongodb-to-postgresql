@@ -11,7 +11,7 @@
   "dependencies": {
     "async": "^3.1.0",
     "async-waterfall": "^0.1.5",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongodb": "^3.2.7",
     "pg": "^7.11.0"
   }
